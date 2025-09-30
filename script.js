@@ -1,3 +1,6 @@
+// Global WhatsApp number constant (international format without +)
+const WA_NUMBER = '59163753122';
+
 // Smooth anchor scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', (e) => {
@@ -27,6 +30,23 @@ window.addEventListener('load', toggleToTop);
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+// Normalize WhatsApp links to open new chat
+function openWhatsAppNewChat(text = '') {
+  const q = text ? `?text=${encodeURIComponent(text)}` : '';
+  const url = `https://wa.me/${WA_NUMBER}${q}`;
+  window.open(url, '_blank', 'noopener');
+}
+
+// Bind explicit WhatsApp anchors
+(function bindWhatsAppAnchors(){
+  document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      openWhatsAppNewChat('Hola, quisiera saber mas sobre sus servicios.');
+    });
+  });
+})();
+
 // Contact form -> WhatsApp
 const form = document.getElementById('contact-form');
 const toast = document.getElementById('form-toast');
@@ -55,10 +75,9 @@ if (form) {
     const nombre = data.get('nombre') || 'Cliente';
     const asunto = data.get('asunto') || 'Consulta';
     const mensaje = data.get('mensaje') || '';
-    const text = encodeURIComponent(`Hola, soy ${nombre}. Asunto: ${asunto}. ${mensaje}`);
-    const wa = `https://wa.me/59163753122?text=${text}`;
-    showToast('¡Gracias! Abriendo WhatsApp…');
-    window.open(wa, '_blank');
+    const text = `Hola, soy ${nombre}. Asunto: ${asunto}. ${mensaje}`;
+    showToast('Abriendo WhatsApp…');
+    openWhatsAppNewChat(text);
     form.reset();
   });
 }
@@ -118,9 +137,13 @@ cards.forEach(card => {
       spark.style.left = (e.clientX - r.left) + 'px';
       spark.style.top = (e.clientY - r.top) + 'px';
     });
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
       spark.classList.add('active');
       setTimeout(() => spark.classList.remove('active'), 180);
+      if (el.matches('a[href^="https://wa.me/"]')) {
+        openWhatsAppNewChat('Hola, tengo una consulta.');
+      }
     });
   });
 })();
@@ -154,14 +177,12 @@ cards.forEach(card => {
   function step(){
     ctx.clearRect(0,0,w,h);
 
-    // subtle glow background
     const grd = ctx.createRadialGradient(w*0.2,h*0.1,0,w*0.2,h*0.1,Math.max(w,h)*0.7);
     grd.addColorStop(0,'rgba(59,130,246,0.08)');
     grd.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle = grd;
     ctx.fillRect(0,0,w,h);
 
-    // draw sparks
     for (const s of sparks) {
       s.x += s.vx; s.y += s.vy;
       if (s.x < 0) s.x = w; if (s.x > w) s.x = 0;
@@ -172,21 +193,16 @@ cards.forEach(card => {
       ctx.fill();
     }
 
-    // lightning stroke occasionally
     if (Math.random() < 0.05) {
       const x1 = Math.random()*w, y1 = Math.random()*h*0.6;
       let x = x1, y = y1;
       ctx.lineWidth = 1.5*dpr; ctx.strokeStyle = 'rgba(59,130,246,0.35)';
       ctx.beginPath(); ctx.moveTo(x, y);
       for (let i=0;i<8;i++) {
-        x += (Math.random()-0.5)*80*dpr;
-        y += Math.random()*70*dpr;
-        ctx.lineTo(x, y);
+        x += (Math.random()-0.5)*80*dpr; y += Math.random()*70*dpr; ctx.lineTo(x, y);
       }
       ctx.stroke();
-      // outer glow
-      ctx.lineWidth = 3*dpr; ctx.strokeStyle = 'rgba(6,182,212,0.18)';
-      ctx.stroke();
+      ctx.lineWidth = 3*dpr; ctx.strokeStyle = 'rgba(6,182,212,0.18)'; ctx.stroke();
     }
 
     requestAnimationFrame(step);
