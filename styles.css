@@ -679,6 +679,7 @@ body {
   .hero-media {
     order: 99; /* Mueve la imagen arriba en móvil */
   }
+
   .media-img {
     height: 300px;
   }
@@ -763,11 +764,7 @@ body {
   .process-grid {
     grid-template-columns: 1fr; /* Una columna para proceso en móvil */
   }
-  
-  .stat-card {
-      position: static; /* Colocarlo en el flujo normal debajo del título del hero */
-      margin-top: 15px;
-  }
+
 }
 
 
