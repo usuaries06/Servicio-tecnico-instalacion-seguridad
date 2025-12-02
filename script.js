@@ -209,3 +209,71 @@ cards.forEach(card => {
   }
   step();
 })(); 
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Lógica del Dropdown Personalizado ---
+    const customTrigger = document.getElementById('service-select-custom');
+    const optionsList = document.getElementById('service-options-list');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+    const baseNumber = '59163753122'; 
+
+    const messages = {
+        computadoras: 'Hola, VoltsafeTech. Quisiera cotizar el servicio técnico para mi computadora. ¿Podrían ayudarme con esto?',
+        celulares: 'Hola, tengo un problema con mi celular (pantalla/batería/reparación de placa). ¿Podrían darme información de diagnóstico?',
+        camaras: '¡Hola! Estoy interesado en la instalación o el mantenimiento de un sistema de cámaras de seguridad. Por favor, ayúdenme con una cotización.',
+    };
+    
+    // Función para actualizar el botón de WhatsApp
+    function updateWhatsappLink(value, label) {
+        if (value && messages[value]) {
+            const customMessage = encodeURIComponent(messages[value]);
+            const whatsappLink = `https://wa.me/${baseNumber}?text=${customMessage}`;
+            
+            whatsappCta.href = whatsappLink;
+            whatsappCta.classList.remove('disabled');
+            whatsappCta.innerHTML = `<span>Enviar mensaje sobre ${label}</span>`;
+        } else {
+            whatsappCta.href = '#';
+            whatsappCta.classList.add('disabled');
+            whatsappCta.innerHTML = `<span>Contactar por WhatsApp</span>`;
+        }
+    }
+
+    // 1. Alternar la visibilidad de la lista de opciones
+    customTrigger.addEventListener('click', function() {
+        optionsList.style.display = optionsList.style.display === 'block' ? 'none' : 'block';
+        customTrigger.classList.toggle('active');
+    });
+
+    // 2. Seleccionar una opción
+    optionsList.querySelectorAll('li').forEach(option => {
+        option.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            const label = this.getAttribute('data-label');
+
+            // Actualizar el valor del elemento visible
+            customTrigger.textContent = label;
+            customTrigger.setAttribute('data-value', value);
+            
+            // Cerrar la lista
+            optionsList.style.display = 'none';
+            customTrigger.classList.remove('active');
+
+            // Actualizar el botón de WhatsApp
+            updateWhatsappLink(value, label);
+        });
+    });
+
+    // 3. Cerrar el dropdown al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!customTrigger.contains(e.target) && !optionsList.contains(e.target)) {
+            optionsList.style.display = 'none';
+            customTrigger.classList.remove('active');
+        }
+    });
+
+    // Asegura la inicialización (si es necesario)
+    updateWhatsappLink('', ''); 
+});
