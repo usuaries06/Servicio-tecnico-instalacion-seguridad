@@ -1,5 +1,5 @@
 // Global WhatsApp number constant (international format without +)
-const WA_NUMBER = '59163753122';
+const WA_NUMBER = '59175412076';
 
 // Smooth anchor scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -276,4 +276,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Asegura la inicialización (si es necesario)
     updateWhatsappLink('', ''); 
+});
+
+
+
+
+
+
+//icono de hamburguesa
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Obtener referencias a los elementos por su ID
+    const menuToggle = document.getElementById('menu-toggle');
+    const mainNav = document.getElementById('main-nav');
+    
+    // Si no encontramos los elementos (por seguridad), detenemos la ejecución.
+    if (!menuToggle || !mainNav) return;
+
+    /**
+     * Alterna el estado del menú de navegación.
+     */
+    function toggleMenu() {
+        // Obtiene el estado actual del atributo 'aria-expanded' (true o false)
+        const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+
+        // Alterna el valor (true a false, o viceversa)
+        const newExpandedState = !isExpanded;
+
+        // Actualiza el atributo 'aria-expanded' en el botón y en el menú
+        menuToggle.setAttribute('aria-expanded', newExpandedState);
+        mainNav.setAttribute('aria-expanded', newExpandedState);
+        
+        // El CSS se encarga de mostrar/ocultar el menú según este atributo.
+    }
+
+    // 2. Asignar el evento de escucha (Listener) al botón
+    menuToggle.addEventListener('click', toggleMenu);
+
+
+    // [OPCIONAL] CERRAR EL MENÚ AL HACER CLIC EN UN ENLACE
+    // Esto es vital para la usabilidad en móviles.
+    const navLinks = mainNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Solo cerramos si el menú está abierto
+            if (menuToggle.getAttribute('aria-expanded') === 'true') {
+                toggleMenu(); // Llama a la misma función para cerrarlo
+            }
+        });
+    });
+
 });
